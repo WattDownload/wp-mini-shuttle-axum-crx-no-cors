@@ -89,7 +89,7 @@ export default function App() {
   const handleDownload = async () => {
     setIsLoading(true)
 
-    const apiEndpoint = 'https://fervent-elbakyan-mr3w.shuttle.app/generate-epub';
+    const apiEndpoint = 'https://YOUR_BACKEND_DOMAIN_HERE/generate-epub';
     
     try {
       const cookies = await chrome.cookies.getAll({ domain: 'wattpad.com' })
