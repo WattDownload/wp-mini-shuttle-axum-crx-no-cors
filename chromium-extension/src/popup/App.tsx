@@ -10,30 +10,86 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (chrome.tabs) {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    // We define an async function to handle URL checking
+    const checkUrl = async () => {
+      if (chrome.tabs) {
+        // Use a promise-based approach for cleaner async/await syntax
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
         const url = tabs[0]?.url ?? '';
-        const wattpadStoryRegex = /^https?:\/\/(www\.)?wattpad\.com\/story\/(\d+)/;
-        const match = url.match(wattpadStoryRegex);
 
-        if (match && match[2]) {
+        const wattpadStoryRegex = /^https?:\/\/(?:www\.)?wattpad\.com\/story\/(\d+)/;
+        const wattpadStoryPartRegex = /^https?:\/\/(?:www\.)?wattpad\.com\/(\d+)/; 
+
+        const storyMatch = url.match(wattpadStoryRegex);
+        const storyPartMatch = url.match(wattpadStoryPartRegex);
+
+        if (storyMatch && storyMatch[2]) {
+          const directStoryId = storyMatch[2];
+          // NEW DEBUG LOG
+          console.log("✅ Direct Story URL found. Story ID:", directStoryId);
           setIsValidPage(true);
-          setStoryId(match[2]);
+          setStoryId(directStoryId);
+
+        } else if (storyPartMatch && storyPartMatch[1]) {
+          const partId = storyPartMatch[1];
+          // NEW DEBUG LOG
+          console.log("🔍 Story Part URL found. Extracted Part ID:", partId);
+
+          // NEW: Define the request URL as a variable to log it
+          const requestUrl = `https://www.wattpad.com/api/v3/story_parts/${partId}?fields=groupId`;
+          
+          // NEW DEBUG LOG
+          console.log("➡️ Making API Request to URL:", requestUrl);
+
+          try {
+            const response = await fetch(requestUrl, {
+              headers: {
+                'User-Agent': navigator.userAgent
+              }
+            });
+
+            if (!response.ok) {
+              // NEW: Log the full error response text from the server
+              const errorBody = await response.text().catch(() => "Could not read error body.");
+              console.error(`Wattpad API failed with status: ${response.status}`);
+              console.error("Wattpad API Error Response Body:", errorBody); // <-- IMPORTANT LOG
+              throw new Error(`Wattpad API failed with status: ${response.status}. Check the extension console for details.`);
+            }
+
+            // If the response is OK, parse it as JSON and log it
+            const data = await response.json();
+            console.log("Wattpad API Success Response:", data); // <-- SUCCESS LOG
+
+            if (data && data.groupId) {
+              // Successfully found the story ID (groupId)
+              setIsValidPage(true);
+              setStoryId(data.groupId);
+            } else {
+              // The API responded but didn't give us an ID
+              setIsValidPage(false);
+            }
+          } catch (error) {
+            console.error("Failed to resolve story part ID:", error);
+            setIsValidPage(false);
+          }
         } else {
+          // The URL is not a valid Wattpad story or story part page
           setIsValidPage(false);
         }
-      });
-    } else {
-      // Fallback for development
-      setIsValidPage(true);
-      setStoryId("123456789"); // Example ID for testing
-    }
-  }, [])
+      } else {
+        // Fallback for development remains the same
+        setIsValidPage(true);
+        setStoryId("123456789"); // Example ID for testing
+      }
+    };
+
+    checkUrl();
+  }, []); // This effect runs once when the component mounts
 
   const handleDownload = async () => {
     setIsLoading(true)
 
-    const apiEndpoint = 'https://YOUR_BACKEND_URL_HERE/generate-epub';
+    const apiEndpoint = 'https://fervent-elbakyan-mr3w.shuttle.app/generate-epub';
     
     try {
       const cookies = await chrome.cookies.getAll({ domain: 'wattpad.com' })
