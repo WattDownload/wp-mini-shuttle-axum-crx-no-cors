@@ -332,6 +332,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "crc"
+version = "3.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9710d3b3739c2e349eb44fe848ad0b7c8cb1e42bd87ee49371df2f7acaf3e675"
+dependencies = [
+ "crc-catalog",
+]
+
+[[package]]
+name = "crc-catalog"
+version = "2.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "19d374276b40fb8bbdee95aef7c7fa6b5316ec764510eb64b8dd0e2ed0d7e7f5"
+
+[[package]]
 name = "crc32fast"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1031,23 +1046,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "iepub"
-version = "1.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f2a7071b69e37b87369741142be3d086b2f80516d47d8b429284b45f4734c7e"
-dependencies = [
- "iepub-derive",
- "quick-xml 0.37.5",
- "zip",
-]
-
-[[package]]
-name = "iepub-derive"
-version = "1.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0a7fa6eed431bd5f468b447e35354dcb270c9e7ee8e9aa972f43664faeca4743"
-
-[[package]]
 name = "indexmap"
 version = "2.11.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1223,6 +1221,16 @@ name = "lru-slab"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
+
+[[package]]
+name = "lzma-rust2"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c60a23ffb90d527e23192f1246b14746e2f7f071cb84476dd879071696c18a4a"
+dependencies = [
+ "crc",
+ "sha2",
+]
 
 [[package]]
 name = "matchers"
@@ -1961,9 +1969,9 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.225"
+version = "1.0.226"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd6c24dee235d0da097043389623fb913daddf92c76e9f5a1db88607a0bcbd1d"
+checksum = "0dca6411025b24b60bfa7ec1fe1f8e710ac09782dca409ee8237ba74b51295fd"
 dependencies = [
  "serde_core",
  "serde_derive",
@@ -1971,18 +1979,18 @@ dependencies = [
 
 [[package]]
 name = "serde_core"
-version = "1.0.225"
+version = "1.0.226"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "659356f9a0cb1e529b24c01e43ad2bdf520ec4ceaf83047b83ddcc2251f96383"
+checksum = "ba2ba63999edb9dac981fb34b3e5c0d111a69b0924e253ed29d83f7c99e966a4"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.225"
+version = "1.0.226"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ea936adf78b1f766949a4977b91d2f5595825bd6ec079aa9543ad2685fc4516"
+checksum = "8db53ae22f34573731bafa1db20f04027b2d25e02d8205921b569171699cdb33"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2039,6 +2047,17 @@ name = "sha1"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3bf829a2d51ab4a5ddf1352d8470c140cadc8301b2ae1789db023f01cedd6ba"
+dependencies = [
+ "cfg-if",
+ "cpufeatures",
+ "digest",
+]
+
+[[package]]
+name = "sha2"
+version = "0.10.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283"
 dependencies = [
  "cfg-if",
  "cpufeatures",
@@ -3190,7 +3209,7 @@ dependencies = [
 
 [[package]]
 name = "wp-mini-axum"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "anyhow",
  "axum",
@@ -3207,20 +3226,20 @@ dependencies = [
 
 [[package]]
 name = "wp-mini-epub"
-version = "0.2.0-alpha.2"
+version = "0.5.0-alpha.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59f2dc02e2f7161b3e0d63271c8b03cbf3c0e673a851ef31c02702425bfdb82f"
+checksum = "69ce1fa19bfb29d7e9d474c527de27ea2d98ce96c98890102e0e9ae0da80081d"
 dependencies = [
  "anyhow",
  "futures",
- "iepub",
  "lol_html",
  "quick-xml 0.38.3",
  "reqwest",
  "thiserror 2.0.16",
  "tracing",
  "wp-mini",
- "zip",
+ "zepub",
+ "zip 5.1.1",
 ]
 
 [[package]]
@@ -3252,6 +3271,23 @@ dependencies = [
  "syn",
  "synstructure",
 ]
+
+[[package]]
+name = "zepub"
+version = "1.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ed0840ffbee61cfd43e4a4ef000f6721160a2daba5b02f224765ede2a732abe"
+dependencies = [
+ "quick-xml 0.37.5",
+ "zepub-derive",
+ "zip 4.6.1",
+]
+
+[[package]]
+name = "zepub-derive"
+version = "1.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "83641445739da6f609e4f3b769d69f88addfe7b13ddb6b2ad04add61cc492e93"
 
 [[package]]
 name = "zerocopy"
@@ -3364,6 +3400,33 @@ dependencies = [
  "hmac",
  "indexmap",
  "liblzma",
+ "memchr",
+ "pbkdf2",
+ "ppmd-rust",
+ "sha1",
+ "time",
+ "zeroize",
+ "zopfli",
+ "zstd",
+]
+
+[[package]]
+name = "zip"
+version = "5.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f852905151ac8d4d06fdca66520a661c09730a74c6d4e2b0f27b436b382e532"
+dependencies = [
+ "aes",
+ "arbitrary",
+ "bzip2",
+ "constant_time_eq",
+ "crc32fast",
+ "deflate64",
+ "flate2",
+ "getrandom 0.3.3",
+ "hmac",
+ "indexmap",
+ "lzma-rust2",
  "memchr",
  "pbkdf2",
  "ppmd-rust",
