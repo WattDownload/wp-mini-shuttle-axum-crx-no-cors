@@ -17,28 +17,24 @@ export default function App() {
         const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
         const url = tabs[0]?.url ?? '';
 
-        const wattpadStoryRegex = /^https?:\/\/(?:www\.)?wattpad\.com\/story\/(\d+)/;
-        const wattpadStoryPartRegex = /^https?:\/\/(?:www\.)?wattpad\.com\/(\d+)/; 
+        const wattpadStoryRegex = /^https?:\/\/(?:www\.)?wattpad\.com\/story\/(\d+)-.*/;
+        const wattpadStoryPartRegex = /^https?:\/\/(?:www\.)?wattpad\.com\/(\d+)/;
 
         const storyMatch = url.match(wattpadStoryRegex);
         const storyPartMatch = url.match(wattpadStoryPartRegex);
 
-        if (storyMatch && storyMatch[2]) {
-          const directStoryId = storyMatch[2];
-          // NEW DEBUG LOG
+        // Check for the story ID in the correct capture group (index 1)
+        if (storyMatch && storyMatch[1]) {
+          const directStoryId = storyMatch[1];
           console.log("✅ Direct Story URL found. Story ID:", directStoryId);
           setIsValidPage(true);
           setStoryId(directStoryId);
 
         } else if (storyPartMatch && storyPartMatch[1]) {
           const partId = storyPartMatch[1];
-          // NEW DEBUG LOG
           console.log("🔍 Story Part URL found. Extracted Part ID:", partId);
-
-          // NEW: Define the request URL as a variable to log it
-          const requestUrl = `https://www.wattpad.com/api/v3/story_parts/${partId}?fields=groupId`;
           
-          // NEW DEBUG LOG
+          const requestUrl = `https://www.wattpad.com/api/v3/story_parts/${partId}?fields=groupId`;
           console.log("➡️ Making API Request to URL:", requestUrl);
 
           try {
@@ -49,23 +45,19 @@ export default function App() {
             });
 
             if (!response.ok) {
-              // NEW: Log the full error response text from the server
               const errorBody = await response.text().catch(() => "Could not read error body.");
               console.error(`Wattpad API failed with status: ${response.status}`);
-              console.error("Wattpad API Error Response Body:", errorBody); // <-- IMPORTANT LOG
-              throw new Error(`Wattpad API failed with status: ${response.status}. Check the extension console for details.`);
+              console.error("Wattpad API Error Response Body:", errorBody);
+              throw new Error(`Wattpad API failed with status: ${response.status}.`);
             }
 
-            // If the response is OK, parse it as JSON and log it
             const data = await response.json();
-            console.log("Wattpad API Success Response:", data); // <-- SUCCESS LOG
+            console.log("Wattpad API Success Response:", data);
 
             if (data && data.groupId) {
-              // Successfully found the story ID (groupId)
               setIsValidPage(true);
               setStoryId(data.groupId);
             } else {
-              // The API responded but didn't give us an ID
               setIsValidPage(false);
             }
           } catch (error) {
@@ -73,7 +65,6 @@ export default function App() {
             setIsValidPage(false);
           }
         } else {
-          // The URL is not a valid Wattpad story or story part page
           setIsValidPage(false);
         }
       } else {
