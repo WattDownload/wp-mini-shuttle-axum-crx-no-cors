@@ -5,6 +5,7 @@ export default defineManifest({
   manifest_version: 3,
   name: pkg.name,
   version: pkg.version,
+  description: "Easily download Wattpad stories as EPUB files for offline reading.",
   icons: {
     48: 'public/logo.png',
   },
@@ -17,7 +18,6 @@ export default defineManifest({
   permissions: [
     'tabs',
     'cookies',
-    'downloads',
   ],
   host_permissions: [
     "https://*.wattpad.com/*"
