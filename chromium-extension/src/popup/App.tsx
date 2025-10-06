@@ -78,57 +78,61 @@ export default function App() {
   }, []); // This effect runs once when the component mounts
 
   const handleDownload = async () => {
-    setIsLoading(true)
+      setIsLoading(true);
 
-    const apiEndpoint = 'https://YOUR_BACKEND_DOMAIN_HERE/generate-epub';
-    
-    try {
-      const cookies = await chrome.cookies.getAll({ domain: 'wattpad.com' })
+      try {
+          // Fetch the story's metadata to get the official title. Not the best way, of course.
+          const metaResponse = await fetch(`https://www.wattpad.com/api/v3/stories/${storyId}?fields=title`);
+          if (!metaResponse.ok) {
+              // If we can't get the title, we can still proceed with a generic name
+              console.warn("Could not fetch story title from Wattpad API. Using story ID as fallback.");
+          }
+          const metaData = await metaResponse.json().catch(() => ({})); // Handle potential JSON parsing errors
+        
+          // Create a clean, safe filename from the title, with a fallback
+          const title = metaData?.title || `story_${storyId}`;
+          const sanitizedTitle = title.replace(/[\\/:\*?"<>\|]/g, '_');
+          const filename = `${sanitizedTitle}.epub`;
 
-      const response = await fetch(apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          storyId: Number(storyId),
-          isEmbedImages: embedImages,
-          cookies: cookies,
-        }),
-      });
+          // Fetch the EPUB file data from backend
+          const apiEndpoint = 'https://modest-chebyshev-za7x.shuttle.app/generate-epub';
+          const cookies = await chrome.cookies.getAll({ domain: 'wattpad.com' });
+        
+          const response = await fetch(apiEndpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  storyId: Number(storyId),
+                  isEmbedImages: embedImages,
+                  cookies: cookies,
+              }),
+          });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        const errorMessage = errorData?.error || response.statusText;
-        throw new Error(`API Error: ${errorMessage}`);
+          if (!response.ok) {
+              const errorData = await response.json().catch(() => null);
+              throw new Error(`API Error: ${errorData?.error || response.statusText}`);
+          }
+
+          // Use the <a> tag trick to trigger the download with the correct filename
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', filename);
+          document.body.appendChild(link);
+          link.click();
+
+          // Clean up the temporary elements and URL
+          link.parentNode?.removeChild(link);
+          window.URL.revokeObjectURL(url);
+
+      } catch (error) {
+          console.error('Download failed:', error);
+          alert('An error occurred during the download.');
+      } finally {
+          setIsLoading(false);
       }
-
-
-      // 1. Get the raw file data from the response as a Blob.
-      const blob = await response.blob();
-
-      // 2. Create a temporary local URL for the data.
-      const url = URL.createObjectURL(blob);
-
-      // 3. Construct the filename directly on the frontend.
-      const filename = `story_${storyId}.epub`;
-
-      // 4. Use the chrome.downloads API with the blob URL and our filename.
-      chrome.downloads.download({
-        url: url,
-        filename: filename, // Uses self-constructed filename
-      }, () => {
-        // 5. Revoke the temporary URL to free up memory.
-        URL.revokeObjectURL(url);
-      });
-
-    } catch (error) {
-      console.error('Download failed:', error)
-      alert('An error occurred during the download.');
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  };
 
   if (isValidPage === null) {
     return (
@@ -152,6 +156,7 @@ export default function App() {
                 type="checkbox"
                 checked={embedImages}
                 onChange={() => setEmbedImages(!embedImages)}
+                disabled={isLoading}
               />
               <span className="slider"></span>
             </label>
