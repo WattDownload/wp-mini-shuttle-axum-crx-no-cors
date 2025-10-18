@@ -1,190 +1,240 @@
 /* popup.css - replace your current popup css with this (or merge carefully) */
 
 /* ---------- theme vars ---------- */
-:root{
-  --bg-color: #202124;
-  --text-color: #dfe1e5;
-  --text-color-secondary: #9aa0a6;
-  --accent-color: #4caf50;
-  --glow-color: #1a4f2c;
-  --button-bg: #3c4043;
-  --button-text: #e8eaed;
-  --button-border: #5f6368;
-  --button-hover-bg: #4d5154;
-  --button-hover-border: var(--accent-color);
-  --switch-bg: #5f6368;
-  --radius: 10px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  color: var(--text-color);
-  background-color: var(--bg-color);
-  color-scheme: light dark;
+:root {
+    --bg-color: #202124;
+    --text-color: #dfe1e5;
+    --text-color-secondary: #9aa0a6;
+    --accent-color: #4caf50;
+    --glow-color: #1a4f2c;
+    --button-bg: #3c4043;
+    --button-text: #e8eaed;
+    --button-border: #5f6368;
+    --button-hover-bg: #4d5154;
+    --button-hover-border: var(--accent-color);
+    --switch-bg: #5f6368;
+    --radius: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    color-scheme: light dark;
 }
 
 /* light overrides (optional) */
-@media (prefers-color-scheme: light){
-  :root{
-    --bg-color: #fff;
-    --text-color: #202124;
-    --text-color-secondary: #5f6368;
-    --button-bg: #f8f9fa;
-    --button-text: #3c4043;
-    --button-border: #dadce0;
-    --button-hover-bg: #f1f3f4;
-    --switch-bg: #dadce0;
-  }
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-color: #fff;
+        --text-color: #202124;
+        --text-color-secondary: #5f6368;
+        --button-bg: #f8f9fa;
+        --button-text: #3c4043;
+        --button-border: #dadce0;
+        --button-hover-bg: #f1f3f4;
+        --switch-bg: #dadce0;
+    }
 }
 
 /* reset box sizing */
 *,
 *::before,
-*::after { box-sizing: border-box; }
+*::after {
+    box-sizing: border-box;
+}
 
 /* Ensure full height for centering to work */
-html, body, #root { height: 100%; }
+html, body, #root {
+    height: 100%;
+}
 
 /* Popup window size (Chrome extension popup) */
 body {
-  margin: 0;
-  width: 300px;     /* popup width */
-  height: 250px;    /* popup height */
-  position: relative;
-  display: flex;
-  align-items: center;   /* vertical center */
-  justify-content: center; /* horizontal center */
-  background: var(--bg-color);
-  color: var(--text-color);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+    margin: 0;
+    width: 300px; /* popup width */
+    height: 250px; /* popup height */
+    position: relative;
+    display: flex;
+    align-items: center; /* vertical center */
+    justify-content: center; /* horizontal center */
+    background: var(--bg-color);
+    color: var(--text-color);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* subtle centered glow behind content without creating a visible box */
-body::after{
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 84%;
-  height: 78%;
-  pointer-events: none;
-  border-radius: 18px;
-  background: radial-gradient(circle at center, rgba(26,79,44,0.06), transparent 36%);
-  filter: blur(8px);
-  z-index: 0;
+body::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 84%;
+    height: 78%;
+    pointer-events: none;
+    border-radius: 18px;
+    background: radial-gradient(circle at center, rgba(26, 79, 44, 0.06), transparent 36%);
+    filter: blur(8px);
+    z-index: 0;
 }
 
 /* root container that React mounts into */
 #root {
-  width: 100%;
-  height: 100%;
-  padding: 10px;        /* inner safe padding so content doesn't touch edges */
-  display: flex;
-  align-items: center;  /* center children vertically */
-  justify-content: center; /* center children horizontally */
-  z-index: 1;           /* above the glow pseudo-element */
+    width: 100%;
+    height: 100%;
+    padding: 10px; /* inner safe padding so content doesn't touch edges */
+    display: flex;
+    align-items: center; /* center children vertically */
+    justify-content: center; /* center children horizontally */
+    z-index: 1; /* above the glow pseudo-element */
 }
 
 /* THIS is important — you used main.className="container" in your component */
 .container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-  justify-content: center; /* keeps functional UI vertically centered */
-  z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: center; /* keeps functional UI vertically centered */
+    z-index: 1;
 }
 
 /* Make sure inner panels are NOT boxed */
 .functional-ui,
 .invalid-page-ui {
-  width: 100%;
-  max-width: 280px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  padding: 0;            /* no extra panel padding if you don't want a card look */
-  background: transparent; /* <-- important: no panel background */
-  box-shadow: none;       /* <-- remove any shadow that produced a box */
-  border-radius: 0;       /* remove rounded panel if that looked boxed */
+    width: 100%;
+    max-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    padding: 0; /* no extra panel padding if you don't want a card look */
+    background: transparent; /* <-- important: no panel background */
+    box-shadow: none; /* <-- remove any shadow that produced a box */
+    border-radius: 0; /* remove rounded panel if that looked boxed */
 }
 
 /* Logo + glow */
 .logo {
-  height: 72px; /* was 56px */
-  transition: transform 220ms ease, filter 220ms ease;
-  filter: drop-shadow(0 0 6px rgba(26,79,44,0.14));
+    height: 72px; /* was 56px */
+    transition: transform 220ms ease, filter 220ms ease;
+    filter: drop-shadow(0 0 6px rgba(26, 79, 44, 0.14));
 }
+
 .logo:hover {
-  transform: scale(1.07);
-  filter: drop-shadow(0 0 16px var(--glow-color));
+    transform: scale(1.07);
+    filter: drop-shadow(0 0 16px var(--glow-color));
 }
 
 
 /* Typography */
 h2, h3 {
-  margin: 0;
-  font-weight: 600;
-  color: var(--text-color);
-  z-index: 2;
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-color);
+    z-index: 2;
 }
+
 p {
-  margin: 0;
-  color: var(--text-color-secondary);
-  font-size: 0.9rem;
-  line-height: 1.3;
-  text-align: center;
-  z-index: 2;
+    margin: 0;
+    color: var(--text-color-secondary);
+    font-size: 0.9rem;
+    line-height: 1.3;
+    text-align: center;
+    z-index: 2;
 }
 
 /* Settings row (switch + label) */
 .settings {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center; /* centers horizontally */
-  gap: 0.5rem; /* small gap between label and switch */
-  width: auto; /* shrink to fit */
-  font-size: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center; /* centers horizontally */
+    gap: 0.5rem; /* small gap between label and switch */
+    width: auto; /* shrink to fit */
+    font-size: 1rem;
 }
 
 .settings label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 }
 
 /* Buttons */
 button {
-  width: 100%;
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--button-border);
-  background: var(--button-bg);
-  color: var(--button-text);
-  cursor: pointer;
-  transition: transform 120ms ease, background-color 140ms;
-  z-index: 2;
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--button-border);
+    background: var(--button-bg);
+    color: var(--button-text);
+    cursor: pointer;
+    transition: transform 120ms ease, background-color 140ms;
+    z-index: 2;
 }
-button:hover{ transform: translateY(-1px); background: var(--button-hover-bg); }
-button:disabled{ opacity: .6; cursor:not-allowed; transform:none; }
+
+button:hover {
+    transform: translateY(-1px);
+    background: var(--button-hover-bg);
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
+}
 
 /* Switch */
-.switch { position: relative; display:inline-block; width:50px; height:28px; z-index:2; }
-.switch input { opacity:0; width:0; height:0; }
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    z-index: 2;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
 .slider {
-  position:absolute; inset:0; border-radius:28px; transition: .25s; background:var(--switch-bg);
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    transition: .25s;
+    background: var(--switch-bg);
 }
+
 .slider:before {
-  content:""; position:absolute; left:4px; bottom:4px; width:20px; height:20px; border-radius:50%;
-  background:white; box-shadow:0 1px 3px rgba(0,0,0,.35); transition: .25s;
+    content: "";
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+    transition: .25s;
 }
-input:checked + .slider{ background: var(--accent-color); }
-input:checked + .slider:before { transform: translateX(22px); }
+
+input:checked + .slider {
+    background: var(--accent-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
 
 /* safe image rule */
-img { max-width: 100%; height: auto; display: block; }
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
