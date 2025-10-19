@@ -30,7 +30,7 @@ jobs:
         run: bun run build
         
       - name: Upload artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: chromium-extension-zip
           path: release/crx-WattDownload-*.*.*.zip
