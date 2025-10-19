@@ -3119,7 +3119,7 @@ dependencies = [
 
 [[package]]
 name = "wp-mini-axum"
-version = "0.2.7"
+version = "0.2.8"
 dependencies = [
  "anyhow",
  "axum",
@@ -3137,9 +3137,9 @@ dependencies = [
 
 [[package]]
 name = "wp-mini-epub"
-version = "0.7.4"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8240515e9ca8743306b44698e52aa3a301f2af437f9ffbce20814f945039473"
+checksum = "48efb1854abb9fd610bf3234e906d5d59eb8990b1982cbc56e07e95d33bc603b"
 dependencies = [
  "anyhow",
  "futures",
