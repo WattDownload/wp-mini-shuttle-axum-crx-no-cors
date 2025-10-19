@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*.*.*" # Runs only when a tag like 1.0.0 is pushed
+
+permissions:
+  contents: write # Needed to create the release
+
+jobs:
+  build-windows:
+    runs-on: windows-2025
+    defaults:
+      run:
+        working-directory: chromium-extension
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: chromium-extension
+          sparse-checkout-cone-mode: false
+          
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build Extension
+        run: bun run build
+        
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: chromium-extension-zip
+          path: release/crx-WattDownload-*.*.*.zip
+          
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/**/*
